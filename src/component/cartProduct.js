@@ -1,17 +1,22 @@
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { imageServer } from '../ultils';
+import { useNavigation } from '@react-navigation/native';
 
 function CartProduct({data}) {
+    const navigate = useNavigation().navigate
+    const handleNavigateToSpecifyProduct = (item)=>{
+        navigate('ProductSpecify',{slug:item.slug,idProduct:item._id})
+    }
     return (
-    <View style={styles.container}>
+    <View  style={styles.container}>
         {data.map((item, index) =>
         {
             
-           return <View key={index} style={styles.containProduct}>
+           return <TouchableOpacity onPress={()=>handleNavigateToSpecifyProduct(item)} key={index} style={styles.containProduct}>
             <Image style={styles.img} source={{uri:imageServer(item.image[0])}} />
             <Text style={styles.name}>{item.name}</Text>
             <Text style={styles.price}>Giá: {item.price} VND</Text>
-            </View>
+            </TouchableOpacity>
         }
         )}
        

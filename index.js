@@ -25,11 +25,12 @@ const Stack = createNativeStackNavigator();
 
 function GolobalApp() {
   const [states,dispatch] = useContext(Context)
-  let newAccessToke = states.accessToken
+  
     request.interceptors.request.use(
       async (config) => {
         if(config && config?.url!==undefined){
           const url = config?.url;
+          // console.error(url);
           if (
               url?.includes('get-products') ||
               url?.includes('login') ||
@@ -38,23 +39,25 @@ function GolobalApp() {
               url?.includes('account/create')||
               url?.includes('/new-product') ||
               url.includes('news') ||
+              url.includes('get-one-product')||
+              url.includes('feedback/show')||
               url.includes('get-one-product')
           )
               return config;
           const timeNow = Date.now();
           let expiresIn = await AsyncStorage.getItem('expiresIn') * 1;
-          
+          let newAccessToken = await AsyncStorage.getItem('accessToken')
           if (timeNow > expiresIn) {
               const token = await AsyncStorage.getItem('refreshToken');
               const {
-                  token: { accessToken, expiresIn },
+                  token: { accessToken, expiresIn:expiresInNow },
               } = await refreshToken(token);
-              newAccessToke = accessToken,
-              expiresIn = expiresIn
+              newAccessToken = accessToken
+              expiresIn = expiresInNow
+              config.headers.Authorization = newAccessToken;
           }
-          config.headers.Authorization = newAccessToke;
-          AsyncStorage.setItem('accessToken',newAccessToke);
-          AsyncStorage.getItem('expiresIn',expiresIn+'');
+          await AsyncStorage.setItem('accessToken',newAccessToken);
+          await AsyncStorage.setItem('expiresIn',expiresIn+'');
           return config;
         }
     },
@@ -78,7 +81,7 @@ function GolobalApp() {
       
         <Header />
           <View style={styles.body}>
-              <Stack.Navigator initialRouteName="ProductSpecify" screenOptions={{headerShown:false}} >
+              <Stack.Navigator initialRouteName="Home" screenOptions={{headerShown:false}} >
                 <Stack.Screen name="Home" component={HomePage}  />
                 <Stack.Screen name="News" component={News} />
                 <Stack.Screen name="Product" component={Product} />

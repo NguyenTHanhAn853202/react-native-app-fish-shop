@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import request from "../../axios";
 
 export const homeProduct = async()=>{
@@ -25,13 +26,39 @@ export const products = async()=>{
     }
 }
 
-export const specify = async(slug)=>{
+export const product = async(slug)=>{
     try {
         const data = await request.get('product/get-one-product',{
             params: {
-                slug
+                slug:slug
             }
-        });
+        })
+        return data.data
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+
+
+export const showFeedback = async(idProduct)=>{
+    try {
+        const data = await request.get('feedback/show',{
+            params: {
+                idProduct:idProduct
+            }
+        })
+        return data.data
+    } catch (error) {
+        console.error(error);
+    }
+}
+export const  sendFeedback = async(message,starNumber,idProduct) => {
+    try {
+        const data = await request.post('feedback/write',{
+            id:await AsyncStorage.getItem('id'),
+            message,starNumber,idProduct
+        })
         return data.data
     } catch (error) {
         console.error(error);

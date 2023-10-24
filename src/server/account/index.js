@@ -44,7 +44,7 @@ export const refreshToken = async (token = '',userName) => {
             userName: await  AsyncStorage.getItem('userName'),
             token: token,
         });
-        return datas;
+        return datas.data;
     } catch (error) {
         console.log(error);
     }
